@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<meta name="description" content="Save and open your ChatGPT conversations from one place.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>ChatGPT Bookmarks</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151d31;--panel2:#1c2740;--text:#f3f6ff;--muted:#9eabc4;--line:#2b3854;--accent:#9b8cff;--good:#5dd6a3;--danger:#ff7e8b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1b2540 0,#0b1020 55%);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+.wrap{max-width:760px;margin:auto;padding:24px 16px 48px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#9b8cff,#5b8cff);display:grid;place-items:center;font-size:23px}
+h1{font-size:22px;margin:0;letter-spacing:-.4px}.sub{color:var(--muted);font-size:13px;margin-top:2px}
+button,.btn{border:0;border-radius:12px;padding:11px 14px;background:var(--accent);color:#101329;font-weight:700;font-size:14px;cursor:pointer}
+button.secondary,.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+button.danger{background:#3b202c;color:#ffb3bd;border:1px solid #673140}
+.hero{background:linear-gradient(135deg,#222d4b,#171f35);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:16px}
+.hero strong{font-size:18px}.hero p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.pill{background:#10182a;border:1px solid var(--line);padding:6px 10px;border-radius:999px;color:#c8d2e7;font-size:12px}
+.access{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0 20px}
+.access div{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 9px;text-align:center;font-size:12px;color:var(--muted)}
+.access b{display:block;color:var(--text);font-size:13px;margin:3px 0}
+.tools{display:flex;gap:9px;margin-bottom:12px}.tools input{flex:1;min-width:0}
+input,select{width:100%;background:#0d1527;border:1px solid var(--line);color:var(--text);border-radius:11px;padding:12px;font:inherit;outline:none}
+input:focus,select:focus{border-color:var(--accent)}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;margin:18px 0 10px}.sectionhead h2{font-size:16px;margin:0}.muted{color:var(--muted);font-size:12px}
+.list{display:grid;gap:9px}.item{display:flex;align-items:center;gap:11px;background:var(--panel);border:1px solid var(--line);padding:13px;border-radius:15px}
+.item .ico{width:38px;height:38px;border-radius:12px;background:var(--panel2);display:grid;place-items:center;font-size:17px;flex-shrink:0}
+.itemmain{min-width:0;flex:1}.itemtitle{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.itemmeta{color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.itemactions{display:flex;gap:6px}.itemactions button{padding:8px 10px;font-size:12px}
+.empty{border:1px dashed #405071;border-radius:16px;padding:24px;text-align:center;color:var(--muted)}
+dialog{border:1px solid var(--line);border-radius:20px;background:#141d31;color:var(--text);width:min(92vw,480px);padding:20px;box-shadow:0 20px 80px #0009}
+dialog::backdrop{background:#050914c9}dialog h2{margin:0 0 14px;font-size:19px}.field{margin:12px 0}.field label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}.modalactions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.note{font-size:12px;color:var(--muted);margin-top:16px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#e9e6ff;color:#17132c;padding:10px 15px;border-radius:999px;font-weight:700;display:none;z-index:5}
+@media(max-width:520px){.wrap{padding:18px 13px 36px}.top{align-items:flex-start}.top h1{font-size:19px}.access{gap:6px}.access div{padding:10px 5px}.item{padding:10px}.itemactions{flex-direction:column}.itemactions button{padding:7px 9px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">🔖</div><div><h1>ChatGPT Bookmarks</h1><div class="sub">Your important conversations, one tap away</div></div></div>
+    <button id="installBtn" class="secondary" hidden>Install</button>
+  </header>
+  <section class="hero">
+    <strong>Keep your best conversations close.</strong>
+    <p>Save a conversation title and its ChatGPT share/link URL. Your bookmarks stay in this browser on this phone.</p>
+    <div class="stats"><span class="pill" id="count">0 saved</span><span class="pill">10+ supported</span><span class="pill">Stored on this device</span></div>
+  </section>
+  <div class="access">
+    <div>📱<b>Home screen</b>Install as an app</div>
+    <div>🌐<b>Chrome</b>Open in browser</div>
+    <div>💬<b>ChatGPT</b>Conversation link opens ChatGPT</div>
+  </div>
+  <div class="tools">
+    <input id="search" placeholder="Search bookmarks..." aria-label="Search bookmarks">
+    <button id="addBtn">＋ Add</button>
+  </div>
+  <div class="sectionhead"><h2>Your conversations</h2><span class="muted">Tap Open to go to chat</span></div>
+  <div id="list" class="list"></div>
+  <p class="note">Tip: In ChatGPT, open a conversation → tap Share → Copy link. Then return here and add its title and link. Use Export backup to keep a copy of your bookmarks.</p>
+  <div class="tools" style="margin-top:14px">
+    <button class="secondary" id="exportBtn">Export backup</button>
+    <button class="secondary" id="importBtn">Import backup</button>
+    <input type="file" id="importFile" accept="application/json" hidden>
+  </div>
+</div>
+<dialog id="editor">
+  <form id="bookmarkForm">
+    <h2 id="dialogTitle">Add bookmark</h2>
+    <input type="hidden" id="editId">
+    <div class="field"><label for="title">Bookmark name</label><input id="title" required maxlength="80" placeholder="e.g. K-Maps preparation"></div>
+    <div class="field"><label for="url">ChatGPT conversation link</label><input id="url" type="url" required placeholder="https://chatgpt.com/..."></div>
+    <div class="field"><label for="category">Category (optional)</label><input id="category" maxlength="40" placeholder="e.g. BCA, Coding, Projects"></div>
+    <div class="modalactions"><button type="button" class="secondary" id="cancelBtn">Cancel</button><button type="submit">Save bookmark</button></div>
+  </form>
+</dialog>
+<div class="toast" id="toast"></div>
+<script>
+const KEY='chatgpt-bookmarks-v1';
+let bookmarks=load();
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return []}}
+function save(){localStorage.setItem(KEY,JSON.stringify(bookmarks));render()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
+function render(){
+ document.getElementById('count').textContent=`${bookmarks.length} saved`;
+ const q=document.getElementById('search').value.toLowerCase();
+ const rows=bookmarks.filter(b=>(b.title+' '+(b.category||'')).toLowerCase().includes(q));
+ const list=document.getElementById('list');
+ if(!rows.length){list.innerHTML='<div class="empty">'+(bookmarks.length?'No matching bookmarks.':'No bookmarks yet.<br>Add your first ChatGPT conversation above.')+'</div>';return}
+ list.innerHTML=rows.map(b=>`<article class="item">
+ <div class="ico">🔖</div><div class="itemmain"><div class="itemtitle">${esc(b.title)}</div><div class="itemmeta">${esc(b.category||'ChatGPT conversation')}</div></div>
+ <div class="itemactions"><button data-open="${b.id}">Open ↗</button><button class="secondary" data-edit="${b.id}">Edit</button><button class="danger" data-delete="${b.id}">×</button></div></article>`).join('');
+}
+function openEditor(b){document.getElementById('dialogTitle').textContent=b?'Edit bookmark':'Add bookmark';document.getElementById('editId').value=b?.id||'';document.getElementById('title').value=b?.title||'';document.getElementById('url').value=b?.url||'';document.getElementById('category').value=b?.category||'';document.getElementById('editor').showModal()}
+document.getElementById('addBtn').onclick=()=>openEditor();
+document.getElementById('cancelBtn').onclick=()=>document.getElementById('editor').close();
+document.getElementById('bookmarkForm').onsubmit=e=>{e.preventDefault();const id=document.getElementById('editId').value;const title=document.getElementById('title').value.trim();const url=document.getElementById('url').value.trim();const category=document.getElementById('category').value.trim();try{const u=new URL(url);if(!['https:','http:'].includes(u.protocol))throw 0}catch{toast('Enter a valid conversation URL');return}
+ if(id){bookmarks=bookmarks.map(b=>b.id===id?{...b,title,url,category}:b)}else{bookmarks.unshift({id:crypto.randomUUID(),title,url,category,created:Date.now()})}
+ save();document.getElementById('editor').close();toast('Bookmark saved')}
+document.getElementById('list').onclick=e=>{const open=e.target.closest('[data-open]');const edit=e.target.closest('[data-edit]');const del=e.target.closest('[data-delete]');if(open){const b=bookmarks.find(x=>x.id===open.dataset.open);if(b)window.open(b.url,'_blank','noopener')}if(edit){const b=bookmarks.find(x=>x.id===edit.dataset.edit);if(b)openEditor(b)}if(del){if(confirm('Delete this bookmark?')){bookmarks=bookmarks.filter(x=>x.id!==del.dataset.delete);save();toast('Bookmark deleted')}}};
+document.getElementById('search').oninput=render;
+document.getElementById('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(bookmarks,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='chatgpt-bookmarks-backup.json';a.click();URL.revokeObjectURL(a.href)};
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(!Array.isArray(data))throw 0;const valid=data.filter(b=>b.title&&b.url&&/^https?:/.test(b.url));const map=new Map(bookmarks.map(b=>[b.url,b]));valid.forEach(b=>map.set(b.url,{id:b.id||crypto.randomUUID(),title:String(b.title),url:String(b.url),category:String(b.category||'')}));bookmarks=[...map.values()];save();toast('Backup imported')}catch{toast('Could not read that backup')}e.target.value=''};
+let deferredPrompt;const installBtn=document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.hidden=false});
+installBtn.onclick=async()=>{if(!deferredPrompt){toast('Use Chrome menu → Add to Home screen');return}deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBtn.hidden=true};
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+render();
+</script>
+</body></html>
